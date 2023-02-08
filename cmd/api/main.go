@@ -50,16 +50,11 @@ func main() {
 		logger: logger,
 	}
 
-	//Create a route
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/v1/healthcheck", app.healthcheckHandler)
-
 	//create our server
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.port),
-		Handler:      mux,
+		Handler:      app.routes(),
 		IdleTimeout:  time.Minute,      //inactive connection
 		ReadTimeout:  10 * time.Second, //time to read request body or header
 		WriteTimeout: 10 * time.Second,
