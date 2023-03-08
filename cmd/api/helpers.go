@@ -2,6 +2,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
@@ -21,4 +22,28 @@ func (app *application) readIDParams(r *http.Request) (int64, error) {
 
 	return id, nil
 
+}
+
+func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
+
+	//convert the data to JSON format
+
+	js, err := json.Marshal(data)
+	if err != nil {
+
+		return err
+	}
+	js = append(js, '\n')
+
+	for key, value := range headers {
+
+		w.Header()[key] = value
+	}
+
+	//add header information
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	w.Write([]byte(js))
+
+	return nil
 }
